@@ -1,10 +1,10 @@
 # Unified Transactions & Insights Service - Terraform Infrastructure
 
-This repository contains Infrastructure as Code (IaC) using Terraform to provision the foundational infrastructure for Kasha's **Unified Transactions & Insights Service**. This service aggregates transactions from the HIV PDS platform and enterprise services to generate insights for customers, agents, suppliers, and resellers.
+This repository contains Infrastructure as Code (IaC) using Terraform to provision the foundational infrastructure for Kasha's **Unified Transactions & Insights Service**.
 
-## 📋 Overview
+## Overview
 
-The infrastructure provisions a fully managed, scalable, and secure architecture on AWS that supports:
+The infrastructure provisions  architecture on AWS that supports:
 - **Asynchronous transaction processing** via SQS queues
 - **Containerized microservices** using ECS Fargate
 - **Persistent data storage** with encrypted RDS MySQL
@@ -12,7 +12,7 @@ The infrastructure provisions a fully managed, scalable, and secure architecture
 - **High availability** with Application Load Balancer
 - **Multi-country deployment** support without impacting HIV PDS performance
 
-## 🏗️ Architecture
+## Architecture
 
 ### Infrastructure Components
 
@@ -52,7 +52,7 @@ The infrastructure provisions a fully managed, scalable, and secure architecture
    - **Task Execution Role**: Allows ECS to pull images and access Secrets Manager
    - **Task Role**: Allows containers to access SQS and Secrets Manager
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 terraform-unified-transactions-service/
@@ -74,55 +74,10 @@ terraform-unified-transactions-service/
     └── outputs.tf                   # Module outputs
 ```
 
-## 🎯 Design Decisions
 
-### 1. **Modular Architecture**
-- **Rationale**: Encapsulating infrastructure in a reusable module enables deployment across 5+ countries without code duplication
-- **Benefit**: Consistent infrastructure, easier maintenance, DRY principle
 
-### 2. **Asynchronous Processing with SQS**
-- **Rationale**: Decouples HIV PDS from the insights service, preventing performance impact
-- **Benefit**: HIV PDS can continue operating even if insights service is down; handles traffic spikes gracefully
+##  Usage
 
-### 3. **ECS Fargate (Serverless Containers)**
-- **Rationale**: No server management, automatic scaling, pay-per-use pricing
-- **Benefit**: Reduced operational overhead, scales with demand, cost-efficient
-
-### 4. **Multi-AZ Deployment**
-- **Rationale**: High availability across multiple Availability Zones
-- **Benefit**: Service remains available even if one AZ fails
-
-### 5. **Encryption at Rest**
-- **Rationale**: Compliance with data protection regulations, security best practice
-- **Components**: RDS (KMS encryption), SQS (KMS encryption)
-- **Benefit**: Data protected even if storage media is compromised
-
-### 6. **Secrets Manager for Credentials**
-- **Rationale**: Eliminates hardcoded secrets, supports automatic rotation
-- **Benefit**: Enhanced security, compliance, simplified credential management
-
-### 7. **Private Subnet Deployment**
-- **Rationale**: ECS tasks and RDS instances not directly accessible from internet
-- **Benefit**: Reduced attack surface, defense in depth
-
-### 8. **Infrastructure as Code Best Practices**
-- Variable defaults for optional configurations
-- Comprehensive tagging strategy
-- Clear resource naming conventions
-- Dependency management with `depends_on`
-
-### 9. **Multi-Country Support Strategy**
-- **Approach**: `.tfvars` files per country + Terraform workspaces
-- **Example**: `KE.tfvars` for Kenya, `RW.tfvars` for Rwanda, etc.
-- **Benefit**: Environment isolation, country-specific customization
-
-## 🚀 Usage
-
-### Prerequisites
-
-- Terraform >= 1.0
-- AWS CLI configured with appropriate credentials
-- Existing VPC with public and private subnets
 
 ### Configuration
 
@@ -216,9 +171,9 @@ terraform plan -var-file="RW.tfvars"
 
 ```
 
-## 📊 Outputs
+## Outputs
 
-After running `terraform plan`, the following outputs will be available:
+After running, the following outputs will be available:
 
 | Output | Description |
 |--------|-------------|
@@ -229,18 +184,18 @@ After running `terraform plan`, the following outputs will be available:
 | `ecs_cluster_name` | Name of the ECS cluster |
 | `db_credentials_secret_arn` | ARN of DB credentials in Secrets Manager |
 
-## 🔒 Security Features
+## Security Features
 
-- ✅ **No hardcoded secrets** - All credentials managed via Secrets Manager
-- ✅ **Encryption at rest** - RDS and SQS encrypted with KMS
-- ✅ **Encryption in transit** - HTTPS supported on ALB
-- ✅ **Least privilege IAM** - Minimal permissions for each role
-- ✅ **Network isolation** - Private subnets for compute and data layers
-- ✅ **Security groups** - Restricted ingress/egress rules
-- ✅ **Automated backups** - RDS daily backups with 7-day retention
-- ✅ **KMS key rotation** - Automatic key rotation enabled
+- **No hardcoded secrets** - All credentials managed via Secrets Manager
+- **Encryption at rest** - RDS and SQS encrypted with KMS
+- **Encryption in transit** - HTTPS supported on ALB
+- **Least privilege IAM** - Minimal permissions for each role
+- **Network isolation** - Private subnets for compute and data layers
+- **Security groups** - Restricted inbound/outbound
+- **Automated backups** - RDS daily backups with 7-day retention 
+- **KMS key rotation** - Automatic key rotation enabled
 
-## 🔧 Customization
+##  Customization
 
 ### Scaling Configuration
 
@@ -267,30 +222,4 @@ environment = "dev"
 db_instance_class = "db.t3.micro"
 db_multi_az = false
 ecs_desired_count = 1
-```
-
-## 📝 Requirements
-
-As per the task specification:
-
-- ✅ SQS queue with DLQ
-- ✅ ECS Fargate service behind ALB
-- ✅ RDS database with encryption and backups
-- ✅ Secrets Manager for DB credentials
-- ✅ No hardcoded secrets
-- ✅ Assumes existing VPC and subnets
-- ✅ Plan-only (no actual deployment)
-- ✅ Passes `terraform fmt` and `terraform validate`
-
-## 🧪 Testing
-
-```bash
-# Format check
-terraform fmt -check -recursive
-
-# Validation
-terraform validate
-
-# Plan without applying
-terraform plan -var-file="KE.tfvars"
 ```
